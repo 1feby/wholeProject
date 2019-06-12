@@ -23,6 +23,7 @@
                     <navigationItem key="navigationItem" id="rdV-zg-lzo"/>
                     <connections>
                         <segue destination="MMW-Pu-LG8" kind="show" identifier="callSegue" id="VZU-Iq-Kid"/>
+                        <segue destination="MMW-Pu-LG8" kind="show" identifier="smsSegue" id="XIe-bg-6sP"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
@@ -96,4 +97,7 @@
             <point key="canvasLocation" x="-214.49275362318843" y="61.607142857142854"/>
         </scene>
     </scenes>
+    <inferredMetricsTieBreakers>
+        <segue reference="XIe-bg-6sP"/>
+    </inferredMetricsTieBreakers>
 </document>

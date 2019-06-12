@@ -14,6 +14,7 @@ import Contacts
 class ViewController: UIViewController,CLLocationManagerDelegate {
 let locationManager = CLLocationManager()
     var filterdItemsArray = [CONTACTS]()
+    var smstext : String = ""
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
@@ -23,7 +24,7 @@ let locationManager = CLLocationManager()
         /*
         locationManager.requestWhenInUseAuthorization()
         locationManager.startUpdatingLocation()*/
-        callContact(cont: "عزت")
+        sendSMS(cont: "عزت", body: "انا بحبك")
     }
     // **********************to take photo and save photos ****************************
     func takePhotos (){
@@ -161,6 +162,27 @@ let locationManager = CLLocationManager()
         }
         return fetcontacts
     }
+    //********************************  sendSMS    *******************************
+    func sendSMS (cont : String , body : String){
+        filterdItemsArray = fetchcontacts().filter { item in
+            return item.fullname.lowercased().contains(cont.lowercased())
+        }
+        print(filterdItemsArray.count)
+        guard let escapedBody = body.addingPercentEncoding(withAllowedCharacters: .urlHostAllowed) else {
+            return
+        }
+        smstext = escapedBody
+        if filterdItemsArray.count == 1{
+            filterdItemsArray[0].number = filterdItemsArray[0].number.replacingOccurrences(of: " ", with: "")
+            
+            let url : NSURL = URL(string: "sms://\(filterdItemsArray[0].number)&body=\(escapedBody)")! as NSURL
+            UIApplication.shared.open(url as URL, options: [:], completionHandler: nil)
+        }else if filterdItemsArray.count > 1 {
+            performSegue(withIdentifier: "smsSegue", sender: self)}
+        else {
+            createcontactAlert(title: "not found ", message: "no matched name of contact found")
+        }
+    }
     //******************************** prepare for all segues **********************************
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         let destination = segue.destination as! oneTableViewController
@@ -168,6 +190,9 @@ let locationManager = CLLocationManager()
         if segue.identifier == "callSegue"{
             print("yes")
             destination.Seguesty = segue.identifier!}
-        
+        else if segue.identifier == "smsSegue" {
+            destination.Seguesty = segue.identifier!
+            destination.smstext2 = smstext
+        }
     }
     }

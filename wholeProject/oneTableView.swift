@@ -10,13 +10,14 @@ import Contacts
 class oneTableViewController : UITableViewController {
     var contArray = [CONTACTS]()
      var Seguesty : String = ""
+    var smstext2 : String = ""
     var url: NSURL!
     override func viewDidLoad() {
         super.viewDidLoad()
         print("hor")
     }
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        if Seguesty == "callSegue" /*|| Seguesty == "smsSegue"*/{
+        if Seguesty == "callSegue" || Seguesty == "smsSegue"{
             print("rrf \(contArray.count)")
             return contArray.count
             
@@ -25,7 +26,7 @@ class oneTableViewController : UITableViewController {
     }
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "oneCell", for: indexPath) as! TableViewCell
-        if Seguesty == "callSegue" /*|| Seguesty == "smsSegue"*/{
+        if Seguesty == "callSegue" || Seguesty == "smsSegue"{
             
             cell.MainLabel.text = contArray[indexPath.row].fullname
             cell.secondLabel.text = contArray[indexPath.row].number
@@ -39,5 +40,11 @@ class oneTableViewController : UITableViewController {
             contArray[indexPath.row].number = contArray[indexPath.row].number.replacingOccurrences(of: " ", with: "")
             url = URL(string: "telprompt://\(contArray[indexPath.row].number)")! as NSURL
             UIApplication.shared.open(url as URL, options: [:], completionHandler: nil)}
+    else if Seguesty == "smsSegue"{
+    contArray[indexPath.row].number = contArray[indexPath.row].number.replacingOccurrences(of: " ", with: "")
+   /* url = URL(string: "sms://\(contArray[indexPath.row].number)&body=\(smstext2)")! as NSURL
+    UIApplication.shared.open(url as URL, options: [:], completionHandler: nil)*/
+            print("\(smstext2)")
     }
+}
 }
