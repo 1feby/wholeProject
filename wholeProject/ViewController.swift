@@ -10,16 +10,20 @@ import UIKit
 import MapKit
 import SwiftyJSON
 import Alamofire
+import Contacts
 class ViewController: UIViewController,CLLocationManagerDelegate {
 let locationManager = CLLocationManager()
+    var filterdItemsArray = [CONTACTS]()
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
         locationManager.delegate = self
         locationManager.desiredAccuracy = kCLLocationAccuracyHundredMeters
+       //when select weather only
+        /*
         locationManager.requestWhenInUseAuthorization()
-        locationManager.startUpdatingLocation()
-        
+        locationManager.startUpdatingLocation()*/
+        callContact(cont: "عزت")
     }
     // **********************to take photo and save photos ****************************
     func takePhotos (){
@@ -114,5 +118,56 @@ let locationManager = CLLocationManager()
             self.present(alert, animated: true, completion: nil)
         }
     }
-    
+    //*******************************    call contact     *************************************
+    /**/func callContact (cont : String){
+        print("ys")
+        filterdItemsArray = fetchcontacts().filter { item in
+            return item.fullname.lowercased().contains(cont.lowercased())
+        }
+        print(filterdItemsArray.count)
+        if filterdItemsArray.count == 1{
+            filterdItemsArray[0].number = filterdItemsArray[0].number.replacingOccurrences(of: " ", with: "")
+            let url : NSURL = URL(string: "tel://\(filterdItemsArray[0].number)")! as NSURL
+            UIApplication.shared.open(url as URL, options: [:], completionHandler: nil)
+        }else if filterdItemsArray.count > 1 {
+            performSegue(withIdentifier: "callSegue", sender: self)}
+        else {
+            createcontactAlert(title: "not found ", message: "no matched name of contact found")
+        }
+    }
+    func createcontactAlert (title : String , message : String){
+        let alert = UIAlertController(title: title, message: message, preferredStyle: UIAlertController.Style.alert)
+        alert.addAction(UIAlertAction(title: "ok", style: UIAlertAction.Style.default, handler: { (action) in
+            alert.dismiss(animated: true, completion: nil)
+        }))
+        self.present(alert, animated: true, completion: nil)
+    }
+    func fetchcontacts() -> [CONTACTS]{
+        var fetcontacts = [CONTACTS]()
+        let ContactStore = CNContactStore()
+        let keys = [CNContactGivenNameKey,CNContactFamilyNameKey,CNContactPhoneNumbersKey]
+        let fetchreq = CNContactFetchRequest.init(keysToFetch: keys as [CNKeyDescriptor] )
+        do{
+            try ContactStore.enumerateContacts(with: fetchreq) { (contact, end) in
+                let datacontant = CONTACTS(NAME: "\(contact.givenName) \(contact.familyName)", phoneNumber: contact.phoneNumbers.first?.value.stringValue ?? "400")
+                fetcontacts.append(datacontant)
+                //    let dict = [ datacontant.fullname: datacontant.number]
+                //    self.contactdic.append(dict)
+                print(contact.givenName)
+                print(contact.phoneNumbers.first?.value.stringValue ?? "")
+            }}
+        catch{
+            print("failed to fetch")
+        }
+        return fetcontacts
+    }
+    //******************************** prepare for all segues **********************************
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        let destination = segue.destination as! oneTableViewController
+        destination.contArray = filterdItemsArray
+        if segue.identifier == "callSegue"{
+            print("yes")
+            destination.Seguesty = segue.identifier!}
+        
+    }
     }
