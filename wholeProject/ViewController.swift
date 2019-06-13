@@ -11,20 +11,27 @@ import MapKit
 import SwiftyJSON
 import Alamofire
 import Contacts
-class ViewController: UIViewController,CLLocationManagerDelegate {
+import EventKit
+import UIAlertDateTimePicker
+class ViewController: UIViewController,UIImagePickerControllerDelegate, UINavigationControllerDelegate,CLLocationManagerDelegate {
+   
+    
 let locationManager = CLLocationManager()
     var filterdItemsArray = [CONTACTS]()
     var smstext : String = ""
+    let eventStore : EKEventStore = EKEventStore()
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
         locationManager.delegate = self
         locationManager.desiredAccuracy = kCLLocationAccuracyHundredMeters
+        addReminder(title: "feby")
+       
        //when select weather only
         /*
         locationManager.requestWhenInUseAuthorization()
         locationManager.startUpdatingLocation()*/
-        sendSMS(cont: "عزت", body: "انا بحبك")
+       
     }
     // **********************to take photo and save photos ****************************
     func takePhotos (){
@@ -183,6 +190,52 @@ let locationManager = CLLocationManager()
             createcontactAlert(title: "not found ", message: "no matched name of contact found")
         }
     }
+    //*******************************    AddReminder       **************************************
+   func addReminder (title : String){
+   
+        let datePicker = UIDatePicker()
+    datePicker.datePickerMode = .dateAndTime
+    let alert = UIAlertController(title: "Add date", message: nil, preferredStyle: .actionSheet)
+    alert.view.addSubview(datePicker)
+    let DateTime = datePicker.date
+    let ok = UIAlertAction(title: "ok", style: .default) { (action) in
+        DispatchQueue.main.async{
+        self.eventStore.requestAccess(to: EKEntityType.reminder) { (granted, error) in
+             if (granted) && (error == nil) {
+                let reminder:EKReminder = EKReminder(eventStore: self.eventStore)
+                reminder.title = title
+                reminder.priority = 2
+                reminder.notes = "...this is a note"
+                let dateFormatter = DateFormatter()
+                dateFormatter.dateFormat = "yyyy/MM/dd HH:mm"
+                
+                let alarm = EKAlarm(absoluteDate: DateTime)
+                reminder.addAlarm(alarm)
+                
+                reminder.calendar = self.eventStore.defaultCalendarForNewReminders()
+                do {
+                    try self.eventStore.save(reminder, commit: true)
+                    
+                } catch {
+                    let alert = UIAlertController(title: "Reminder could not save", message: (error as NSError).localizedDescription, preferredStyle: .alert)
+                    let OKAction = UIAlertAction(title: "OK", style: .default, handler: nil)
+                    alert.addAction(OKAction)
+                    
+                    self.present(alert, animated: true, completion: nil)
+                }
+            }
+        }
+        }}
+    alert.addAction(ok)
+    let cancel = UIAlertAction(title: "cancel", style: .default, handler: nil)
+    alert.addAction(cancel)
+    let height: NSLayoutConstraint = NSLayoutConstraint(item: alert.view, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1.1, constant: 300)
+    alert.view.addConstraint(height)
+    self.present(alert, animated: true, completion: nil)
+   
+    }
+    
+    
     //******************************** prepare for all segues **********************************
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         let destination = segue.destination as! oneTableViewController
