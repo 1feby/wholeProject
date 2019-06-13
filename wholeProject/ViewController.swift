@@ -25,7 +25,7 @@ let locationManager = CLLocationManager()
         // Do any additional setup after loading the view.
         locationManager.delegate = self
         locationManager.desiredAccuracy = kCLLocationAccuracyHundredMeters
-        addReminder(title: "feby")
+        removeReminder(title: "feby")
        
        //when select weather only
         /*
@@ -234,7 +234,41 @@ let locationManager = CLLocationManager()
     self.present(alert, animated: true, completion: nil)
    
     }
-    
+    //********************************  remove Reminder **************************************
+    func removeReminder (title : String){
+        var calendars: [EKCalendar]?
+        var count : Int = 0
+        calendars = eventStore.calendars(for: EKEntityType.reminder)
+        print("\(calendars?.count)")
+         let predict = eventStore.predicateForReminders(in: calendars)
+       
+            self.eventStore.fetchReminders(matching: predict) { (reminders) in
+            for remind in reminders! {
+                if remind.title.lowercased().contains(title.lowercased()){
+                    do{
+                        // remind.isCompleted = true
+                        try self.eventStore.remove(remind, commit: true)
+                        DispatchQueue.main.async{
+                        let alert = UIAlertController(title: "Reminder is successfully removed", message: "", preferredStyle: .alert)
+                        let OKAction = UIAlertAction(title: "OK", style: .default, handler: nil)
+                        alert.addAction(OKAction)
+                        self.present(alert, animated: true, completion: nil)
+                            count = count + 1 }
+                    }catch{
+                       
+                    }
+                    
+                }
+            }
+            if count == 0 {
+                DispatchQueue.main.async{
+                let alert = UIAlertController(title: "No remider with this title", message: "", preferredStyle: .alert)
+                let OKAction = UIAlertAction(title: "OK", style: .default, handler: nil)
+                alert.addAction(OKAction)
+                    self.present(alert, animated: true, completion: nil)}
+            }
+            }
+    }
     
     //******************************** prepare for all segues **********************************
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
