@@ -20,12 +20,16 @@ let locationManager = CLLocationManager()
     var filterdItemsArray = [CONTACTS]()
     var smstext : String = ""
     let eventStore : EKEventStore = EKEventStore()
+    var calendars: [EKCalendar]?
+    var remindstoto = [EKReminder]()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
         locationManager.delegate = self
         locationManager.desiredAccuracy = kCLLocationAccuracyHundredMeters
-        removeReminder(title: "feby")
+        loadReminder()
+        //removeReminder(title: "feby")
        
        //when select weather only
         /*
@@ -236,7 +240,7 @@ let locationManager = CLLocationManager()
     }
     //********************************  remove Reminder **************************************
     func removeReminder (title : String){
-        var calendars: [EKCalendar]?
+        
         var count : Int = 0
         calendars = eventStore.calendars(for: EKEntityType.reminder)
         print("\(calendars?.count)")
@@ -269,7 +273,18 @@ let locationManager = CLLocationManager()
             }
             }
     }
-    
+    //*******************************   load Reminders ********************************/
+    func loadReminder(){
+        prepareToLoadReminders()
+        performSegue(withIdentifier: "ReminderSegue", sender: self)
+    }
+    func prepareToLoadReminders(){
+        print("yes")
+        calendars = eventStore.calendars(for: EKEntityType.reminder)
+        let predict = eventStore.predicateForReminders(in: calendars)
+        eventStore.fetchReminders(matching: predict) { (reminders) in
+            self .remindstoto = reminders!
+        }}
     //******************************** prepare for all segues **********************************
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         let destination = segue.destination as! oneTableViewController
@@ -280,6 +295,9 @@ let locationManager = CLLocationManager()
         else if segue.identifier == "smsSegue" {
             destination.Seguesty = segue.identifier!
             destination.smstext2 = smstext
+        } else if segue.identifier == "ReminderSegue" {
+            destination.Seguesty = segue.identifier!
+            destination.remindstoto = remindstoto
         }
     }
     }

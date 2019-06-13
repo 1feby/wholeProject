@@ -7,10 +7,12 @@
 //
 import UIKit
 import Contacts
+import EventKit
 class oneTableViewController : UITableViewController {
     var contArray = [CONTACTS]()
      var Seguesty : String = ""
     var smstext2 : String = ""
+    var remindstoto = [EKReminder]()
     var url: NSURL!
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -20,7 +22,8 @@ class oneTableViewController : UITableViewController {
         if Seguesty == "callSegue" || Seguesty == "smsSegue"{
             print("rrf \(contArray.count)")
             return contArray.count
-            
+        }else if Seguesty == "ReminderSegue"{
+            return remindstoto.count
         }
         return 0
     }
@@ -32,7 +35,10 @@ class oneTableViewController : UITableViewController {
             cell.secondLabel.text = contArray[indexPath.row].number
            /* cell.alarmSwitch.isHidden = true
             cell.wikiImage.isHidden = true*/
-    }
+        }else if Seguesty == "ReminderSegue"{
+            cell.MainLabel.text = remindstoto[indexPath.row].title
+            cell.secondLabel.isHidden = true
+        }
         return cell
 }
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
@@ -42,9 +48,15 @@ class oneTableViewController : UITableViewController {
             UIApplication.shared.open(url as URL, options: [:], completionHandler: nil)}
     else if Seguesty == "smsSegue"{
     contArray[indexPath.row].number = contArray[indexPath.row].number.replacingOccurrences(of: " ", with: "")
-   /* url = URL(string: "sms://\(contArray[indexPath.row].number)&body=\(smstext2)")! as NSURL
-    UIApplication.shared.open(url as URL, options: [:], completionHandler: nil)*/
+   url = URL(string: "sms://\(contArray[indexPath.row].number)&body=\(smstext2)")! as NSURL
+    UIApplication.shared.open(url as URL, options: [:], completionHandler: nil)
             print("\(smstext2)")
-    }
+        }else if Seguesty == "ReminderSegue"{
+            url = URL(string:
+                "x-apple-reminder://\(remindstoto[indexPath.row].calendarItemIdentifier)")! as NSURL
+           // print(remindstoto[indexPath.row].calendarItemIdentifier)
+            UIApplication.shared.open(url as URL, options: [:], completionHandler: nil)
+            
+        }
 }
 }

@@ -24,6 +24,7 @@
                     <connections>
                         <segue destination="MMW-Pu-LG8" kind="show" identifier="callSegue" id="VZU-Iq-Kid"/>
                         <segue destination="MMW-Pu-LG8" kind="show" identifier="smsSegue" id="XIe-bg-6sP"/>
+                        <segue destination="MMW-Pu-LG8" kind="show" identifier="ReminderSegue" id="Gua-JJ-hDY"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
@@ -98,6 +99,6 @@
         </scene>
     </scenes>
     <inferredMetricsTieBreakers>
-        <segue reference="XIe-bg-6sP"/>
+        <segue reference="Gua-JJ-hDY"/>
     </inferredMetricsTieBreakers>
 </document>
