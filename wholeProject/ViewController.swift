@@ -28,9 +28,8 @@ let locationManager = CLLocationManager()
         // Do any additional setup after loading the view.
         locationManager.delegate = self
         locationManager.desiredAccuracy = kCLLocationAccuracyHundredMeters
-        loadReminder()
-        //removeReminder(title: "feby")
-       
+       // loadReminder()
+        addEvent(title: "فيبي")
        //when select weather only
         /*
         locationManager.requestWhenInUseAuthorization()
@@ -285,6 +284,104 @@ let locationManager = CLLocationManager()
         eventStore.fetchReminders(matching: predict) { (reminders) in
             self .remindstoto = reminders!
         }}
+    //******************************    Add Event     ****************************************
+    func addEvent(title : String){
+        let datePicker1 = UIDatePicker()
+        var evet : EKEvent = EKEvent(eventStore: self.eventStore)
+        //let datePicker2 = UIDatePicker()
+        datePicker1.datePickerMode = .dateAndTime
+       // datePicker2.datePickerMode = .dateAndTime
+        var test : Bool = false
+        let alert = UIAlertController(title: "Add startDate", message: nil, preferredStyle: .actionSheet)
+        let alert2 = UIAlertController(title: "Add endDate", message: nil, preferredStyle: .actionSheet)
+        alert.view.addSubview(datePicker1)
+    
+        let DateTime1 = datePicker1.date
+        let Next = UIAlertAction(title: "Next", style: .default) { (action) in
+            DispatchQueue.main.async{
+                self.eventStore.requestAccess(to: .event) { (granted, error) in
+                    if (granted) && (error == nil ){
+                        
+                        evet.title = title
+                        evet.startDate = DateTime1
+                        alert2.view.addSubview(datePicker1)
+                        let height: NSLayoutConstraint = NSLayoutConstraint(item: alert2.view, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1.1, constant: 300)
+                        alert2.view.addConstraint(height)
+                        let ok = UIAlertAction(title: "ok", style: .default){ (action) in
+                            DispatchQueue.main.async{
+                                evet.endDate = DateTime1
+                                evet.addAlarm(.init(relativeOffset: -5*60))
+                                evet.notes = "This is note"
+                                evet.calendar = self.eventStore.defaultCalendarForNewEvents
+                                do{
+                                    try self.eventStore.save(evet, span: .thisEvent)
+                                }catch let error as NSError{
+                                    let alert3 = UIAlertController(title: "Event could not save", message: (error as NSError).localizedDescription, preferredStyle: .alert)
+                                    let OKAction = UIAlertAction(title: "OK", style: .default, handler: nil)
+                                    alert3.addAction(OKAction)
+                                    
+                                    self.present(alert3, animated: true, completion: nil)
+                                }
+                            }
+                        }
+                        alert2.addAction(ok)
+                        
+                        let cancel = UIAlertAction(title: "cancel", style: .default){
+                            (action) in
+                            let alert3 = UIAlertController(title: "Event could not save", message: "", preferredStyle: .alert)
+                            let OKAction = UIAlertAction(title: "OK", style: .default, handler: nil)
+                            alert3.addAction(OKAction)
+                            
+                            self.present(alert3, animated: true, completion: nil)
+                        }
+                        alert2.addAction(cancel)
+                        self.present(alert2, animated: true, completion: nil)
+                     
+                    }
+                }
+            }
+        }
+        alert.addAction(Next)
+        let cancel = UIAlertAction(title: "cancel", style: .default){
+            (action) in
+            let alert3 = UIAlertController(title: "Event could not save", message: "", preferredStyle: .alert)
+            let OKAction = UIAlertAction(title: "OK", style: .default, handler: nil)
+            alert3.addAction(OKAction)
+            
+            self.present(alert3, animated: true, completion: nil)
+        }
+        alert.addAction(cancel)
+        let height: NSLayoutConstraint = NSLayoutConstraint(item: alert.view, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1.1, constant: 300)
+        alert.view.addConstraint(height)
+        self.present(alert, animated: true, completion: nil)
+      /*  if test == true {
+            print("yes")
+            alert2.view.addSubview(datePicker1)
+            let ok = UIAlertAction(title: "ok", style: .default){ (action) in
+                DispatchQueue.main.async{
+                    evet.endDate = DateTime1
+                    evet.addAlarm(.init(relativeOffset: -5*60))
+                    evet.notes = "This is note"
+                    evet.calendar = self.eventStore.defaultCalendarForNewEvents
+                    do{
+                        try self.eventStore.save(evet, span: .thisEvent)
+                    }catch let error as NSError{
+                        let alert = UIAlertController(title: "Event could not save", message: (error as NSError).localizedDescription, preferredStyle: .alert)
+                        let OKAction = UIAlertAction(title: "OK", style: .default, handler: nil)
+                        alert.addAction(OKAction)
+                        
+                        self.present(alert, animated: true, completion: nil)
+                    }
+                }
+            }
+            alert2.addAction(ok)
+            let cancel = UIAlertAction(title: "cancel", style: .default, handler: nil)
+            alert2.addAction(cancel)
+            let height: NSLayoutConstraint = NSLayoutConstraint(item: alert2.view, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1.1, constant: 300)
+            alert2.view.addConstraint(height)
+            self.present(alert2, animated: true, completion: nil)
+        }*/
+    }
     //******************************** prepare for all segues **********************************
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         let destination = segue.destination as! oneTableViewController
