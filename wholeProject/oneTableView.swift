@@ -13,6 +13,7 @@ class oneTableViewController : UITableViewController {
      var Seguesty : String = ""
     var smstext2 : String = ""
     var remindstoto = [EKReminder]()
+    var eventTa = [EKEvent]()
     var url: NSURL!
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -24,6 +25,9 @@ class oneTableViewController : UITableViewController {
             return contArray.count
         }else if Seguesty == "ReminderSegue"{
             return remindstoto.count
+        }else if Seguesty == "eventSegue" {
+            print("slsls")
+            return eventTa.count
         }
         return 0
     }
@@ -38,6 +42,9 @@ class oneTableViewController : UITableViewController {
         }else if Seguesty == "ReminderSegue"{
             cell.MainLabel.text = remindstoto[indexPath.row].title
             cell.secondLabel.isHidden = true
+        }else if Seguesty == "eventSegue"{
+            cell.MainLabel.text = eventTa[indexPath.row].title
+            cell.secondLabel.text = "Start date: \(eventTa[indexPath.row].startDate ?? Date())"
         }
         return cell
 }
@@ -56,7 +63,14 @@ class oneTableViewController : UITableViewController {
                 "x-apple-reminder://\(remindstoto[indexPath.row].calendarItemIdentifier)")! as NSURL
            // print(remindstoto[indexPath.row].calendarItemIdentifier)
             UIApplication.shared.open(url as URL, options: [:], completionHandler: nil)
-            
+    
+        }else if Seguesty == "eventSegue"{
+            gotoAppleCalendar(date: eventTa[indexPath.row].startDate as! NSDate)
         }
 }
+    func gotoAppleCalendar(date: NSDate) {
+        let interval = date.timeIntervalSinceReferenceDate
+        let url = NSURL(string: "calshow:\(interval)")!
+        UIApplication.shared.open(url as URL, options: [:], completionHandler: nil)
+    }
 }

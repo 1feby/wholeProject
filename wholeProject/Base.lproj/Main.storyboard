@@ -25,6 +25,7 @@
                         <segue destination="MMW-Pu-LG8" kind="show" identifier="callSegue" id="VZU-Iq-Kid"/>
                         <segue destination="MMW-Pu-LG8" kind="show" identifier="smsSegue" id="XIe-bg-6sP"/>
                         <segue destination="MMW-Pu-LG8" kind="show" identifier="ReminderSegue" id="Gua-JJ-hDY"/>
+                        <segue destination="MMW-Pu-LG8" kind="show" identifier="eventSegue" id="cJ5-eq-hE3"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
@@ -48,7 +49,7 @@
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="secondLabel" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Jqe-6q-rPp">
-                                            <rect key="frame" x="27" y="22" width="185" height="21"/>
+                                            <rect key="frame" x="27" y="22" width="209" height="21"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                             <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                             <nil key="textColor"/>
@@ -99,6 +100,6 @@
         </scene>
     </scenes>
     <inferredMetricsTieBreakers>
-        <segue reference="Gua-JJ-hDY"/>
+        <segue reference="cJ5-eq-hE3"/>
     </inferredMetricsTieBreakers>
 </document>

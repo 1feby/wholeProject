@@ -15,22 +15,23 @@ import EventKit
 import UIAlertDateTimePicker
 class ViewController: UIViewController,UIImagePickerControllerDelegate, UINavigationControllerDelegate,CLLocationManagerDelegate {
    
-    
+    var loadORremove : Bool = false //true for Remove
+    // false  for Load
 let locationManager = CLLocationManager()
     var filterdItemsArray = [CONTACTS]()
     var smstext : String = ""
     let eventStore : EKEventStore = EKEventStore()
     var calendars: [EKCalendar]?
     var remindstoto = [EKReminder]()
-    
+    var events = [EKEvent]()
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
         locationManager.delegate = self
         locationManager.desiredAccuracy = kCLLocationAccuracyHundredMeters
        // loadReminder()
-       addEvent(title: "عزت")
-       //when select weather only
+        LoadRemoveEvent()
+        //when select weather only
         /*
         locationManager.requestWhenInUseAuthorization()
         locationManager.startUpdatingLocation()*/
@@ -364,8 +365,8 @@ let locationManager = CLLocationManager()
         alert.view.addConstraint(height)
         self.present(alert, animated: true, completion: nil)
     }
-    //********************************   remove event     **********************************
-    func removeEvent(){
+    //********************************   Load or remove event     **********************************
+    func LoadRemoveEvent(){
         calendars = eventStore.calendars(for: EKEntityType.event)
          let datePicker1 = UIDatePicker()
          let datePicker2 = UIDatePicker()
@@ -380,9 +381,7 @@ let locationManager = CLLocationManager()
             let DateTime1 = datePicker1.date
             DispatchQueue.main.async{
                let  startDate = DateTime1
-                
                 alert2.view.addSubview(datePicker2)
-                
                 let height: NSLayoutConstraint = NSLayoutConstraint(item: alert2.view, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1.1, constant: 350)
                 alert2.view.addConstraint(height)
                 let ok = UIAlertAction(title: "ok", style: .default){ (action) in
@@ -392,28 +391,42 @@ let locationManager = CLLocationManager()
                         print(endDate)
                         let prediacte = self.eventStore.predicateForEvents(withStart: startDate, end: endDate, calendars: self.calendars!)
                         
-                        let events = self.eventStore.events(matching: prediacte)
-                        print(events.count)
-                        for i in events {
+                        self.events = self.eventStore.events(matching: prediacte)
+                        print(self.events.count)
+                        if self.loadORremove == true {
+                        for i in self.events {
                             self.deleteevent(event: i)
                             print("+/")
-                        }
-                    }
-                    let alert3 = UIAlertController(title: "all Event in this period has been deleted", message: "", preferredStyle: .alert)
+                            }}
+                   
+                    if self.loadORremove == true{
+                        let alert3 = UIAlertController(title: "all Event in this period has been deleted", message: "", preferredStyle: .alert)
                     let OKAction = UIAlertAction(title: "OK", style: .default, handler: nil)
                     alert3.addAction(OKAction)
                     
-                    self.present(alert3, animated: true, completion: nil)
-                }
+                        self.present(alert3, animated: true, completion: nil)}
+                    if self.loadORremove == false{
+                        if self.events.count > 0 {
+                            self.performSegue(withIdentifier: "eventSegue", sender: self)}
+                        else {
+                            let alert3 = UIAlertController(title: "No Event in this period ", message: "", preferredStyle: .alert)
+                            let OKAction = UIAlertAction(title: "OK", style: .default, handler: nil)
+                            alert3.addAction(OKAction)
+                            
+                            self.present(alert3, animated: true, completion: nil)
+                        }
+                    }
+                    }}
                  alert2.addAction(ok)
                 let cancel = UIAlertAction(title: "cancel", style: .default){
                     (action) in
+                    if self.loadORremove == true{
                     let alert3 = UIAlertController(title: "Event could not remove", message: "", preferredStyle: .alert)
                     let OKAction = UIAlertAction(title: "OK", style: .default, handler: nil)
                     alert3.addAction(OKAction)
                     
                     self.present(alert3, animated: true, completion: nil)
-                }
+                    }}
                 alert2.addAction(cancel)
                 self.present(alert2, animated: true, completion: nil)
                 
@@ -422,17 +435,18 @@ let locationManager = CLLocationManager()
         alert.addAction(Next)
         let cancel = UIAlertAction(title: "cancel", style: .default){
             (action) in
+            if self.loadORremove == true{
             let alert3 = UIAlertController(title: "Event could not remove", message: "", preferredStyle: .alert)
             let OKAction = UIAlertAction(title: "OK", style: .default, handler: nil)
             alert3.addAction(OKAction)
             
-            self.present(alert3, animated: true, completion: nil)
+                self.present(alert3, animated: true, completion: nil)}
         }
         alert.addAction(cancel)
         let height: NSLayoutConstraint = NSLayoutConstraint(item: alert.view, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1.1, constant: 350)
         alert.view.addConstraint(height)
         self.present(alert, animated: true, completion: nil)
-        
+       
     }
     func deleteevent(event : EKEvent){
         do{
@@ -442,6 +456,8 @@ let locationManager = CLLocationManager()
             print("Error while deleting event: \(error.localizedDescription)")
         }
     }
+    
+    
     //******************************** prepare for all segues **********************************
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         let destination = segue.destination as! oneTableViewController
@@ -455,6 +471,10 @@ let locationManager = CLLocationManager()
         } else if segue.identifier == "ReminderSegue" {
             destination.Seguesty = segue.identifier!
             destination.remindstoto = remindstoto
+        } else if segue.identifier == "eventSegue" {
+            print("hopaaa")
+            destination.Seguesty = segue.identifier!
+            destination.eventTa = events
         }
     }
     }
