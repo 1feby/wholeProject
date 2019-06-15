@@ -8,13 +8,18 @@
 import UIKit
 import Contacts
 import EventKit
+import MediaPlayer
 class oneTableViewController : UITableViewController {
+    var playListTable = [String]()
+    var numofSong = [Int]()
     var contArray = [CONTACTS]()
      var Seguesty : String = ""
     var smstext2 : String = ""
     var remindstoto = [EKReminder]()
     var eventTa = [EKEvent]()
     var url: NSURL!
+    let myMediaPlayer = MPMusicPlayerApplicationController.applicationQueuePlayer
+     let playlists = MPMediaQuery.playlists().collections
     override func viewDidLoad() {
         super.viewDidLoad()
         print("hor")
@@ -28,23 +33,38 @@ class oneTableViewController : UITableViewController {
         }else if Seguesty == "eventSegue" {
             print("slsls")
             return eventTa.count
+        }else if Seguesty == "musicSegue" {
+            return playListTable.count
         }
         return 0
     }
+    
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "oneCell", for: indexPath) as! TableViewCell
+        
         if Seguesty == "callSegue" || Seguesty == "smsSegue"{
             
             cell.MainLabel.text = contArray[indexPath.row].fullname
             cell.secondLabel.text = contArray[indexPath.row].number
+            cell.alarmSwitch.isHidden = true
+            cell.wikiImage.isHidden = true
            /* cell.alarmSwitch.isHidden = true
             cell.wikiImage.isHidden = true*/
         }else if Seguesty == "ReminderSegue"{
             cell.MainLabel.text = remindstoto[indexPath.row].title
             cell.secondLabel.isHidden = true
+            cell.alarmSwitch.isHidden = true
+            cell.wikiImage.isHidden = true
         }else if Seguesty == "eventSegue"{
             cell.MainLabel.text = eventTa[indexPath.row].title
             cell.secondLabel.text = "Start date: \(eventTa[indexPath.row].startDate ?? Date())"
+            cell.alarmSwitch.isHidden = true
+            cell.wikiImage.isHidden = true
+        }else if Seguesty == "musicSegue"{
+            cell.MainLabel.text = playListTable[indexPath.row]
+            cell.secondLabel.text = "\(numofSong[indexPath.row]) songs"
+            cell.alarmSwitch.isHidden = true
+            cell.wikiImage.isHidden = true
         }
         return cell
 }
@@ -66,6 +86,11 @@ class oneTableViewController : UITableViewController {
     
         }else if Seguesty == "eventSegue"{
             gotoAppleCalendar(date: eventTa[indexPath.row].startDate as! NSDate)
+        }else if Seguesty == "musicSegue"{
+            // Add a playback queue containing all songs on the device
+            myMediaPlayer.setQueue(with: playlists![indexPath.row])
+            // Start playing from the beginning of the queue
+            myMediaPlayer.play()
         }
 }
     func gotoAppleCalendar(date: NSDate) {
@@ -73,4 +98,5 @@ class oneTableViewController : UITableViewController {
         let url = NSURL(string: "calshow:\(interval)")!
         UIApplication.shared.open(url as URL, options: [:], completionHandler: nil)
     }
+   
 }

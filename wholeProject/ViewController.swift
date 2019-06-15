@@ -13,10 +13,14 @@ import Alamofire
 import Contacts
 import EventKit
 import UIAlertDateTimePicker
+import MediaPlayer
 class ViewController: UIViewController,UIImagePickerControllerDelegate, UINavigationControllerDelegate,CLLocationManagerDelegate {
    
     var loadORremove : Bool = false //true for Remove
     // false  for Load
+   
+    var playlistTitle: [String] = []
+    var numOfSongs : [ Int ] = []
 let locationManager = CLLocationManager()
     var filterdItemsArray = [CONTACTS]()
     var smstext : String = ""
@@ -41,7 +45,7 @@ let locationManager = CLLocationManager()
     func takePhotos (){
         if UIImagePickerController.isSourceTypeAvailable(.camera) {
             let imagePickerController = UIImagePickerController()
-            imagePickerController.delegate = self as? UIImagePickerControllerDelegate & UINavigationControllerDelegate
+            //imagePickerController.delegate = self as? UIImagePickerControllerDelegate & UINavigationControllerDelegate
             imagePickerController.sourceType = .camera
             self.present(imagePickerController, animated: true, completion: nil)
         }
@@ -243,7 +247,7 @@ let locationManager = CLLocationManager()
         
         var count : Int = 0
         calendars = eventStore.calendars(for: EKEntityType.reminder)
-        print("\(calendars?.count)")
+      //  print("\(calendars?.count)")
          let predict = eventStore.predicateForReminders(in: calendars)
        
             self.eventStore.fetchReminders(matching: predict) { (reminders) in
@@ -289,7 +293,7 @@ let locationManager = CLLocationManager()
     func addEvent(title : String){
         let datePicker1 = UIDatePicker()
         let datePicker2 = UIDatePicker()
-        var evet : EKEvent = EKEvent(eventStore: self.eventStore)
+        let evet : EKEvent = EKEvent(eventStore: self.eventStore)
         //let datePicker2 = UIDatePicker()
         datePicker1.datePickerMode = .dateAndTime
         datePicker2.datePickerMode = .dateAndTime
@@ -456,7 +460,16 @@ let locationManager = CLLocationManager()
             print("Error while deleting event: \(error.localizedDescription)")
         }
     }
-    
+    ///****************************** playMusic   **************************************
+    func playMusic(){
+        let playlists = MPMediaQuery.playlists().collections
+        for playlist in playlists! {
+            //print(playlist.value(forProperty: MPMediaPlaylistPropertyName)!)
+            playlistTitle.append(playlist.value(forProperty: MPMediaPlaylistPropertyName)! as! String)
+            numOfSongs.append(playlist.count)
+        }
+        performSegue(withIdentifier: "musicSegue", sender: self)
+    }
     
     //******************************** prepare for all segues **********************************
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
@@ -475,6 +488,10 @@ let locationManager = CLLocationManager()
             print("hopaaa")
             destination.Seguesty = segue.identifier!
             destination.eventTa = events
+        }else if segue.identifier == "musicSegue" {
+            destination.Seguesty = segue.identifier!
+            destination.playListTable = playlistTitle
+            destination.numofSong = numOfSongs
         }
     }
     }

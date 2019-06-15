@@ -13,11 +13,13 @@ class TableViewCell: UITableViewCell{
     
     //weak var delegatess: soso?
     
-    //var alarmo = [Alarm]()
+    var alarmo = [Alarm]()
     
     @IBOutlet weak var MainLabel: UILabel!
-    // @IBOutlet weak var alarmSwitch: UISwitch!
+    @IBOutlet weak var alarmSwitch: UISwitch!
+    @IBOutlet weak var wikiImage: UIImageView!
     @IBOutlet weak var secondLabel: UILabel!
+   
     // @IBOutlet weak var wikiImage: UIImageView!
     
     override func awakeFromNib() {
@@ -32,10 +34,10 @@ class TableViewCell: UITableViewCell{
     }
     
     
-    /*@IBAction func alarmSwitched(_ sender: UISwitch) {
-        
-        self.delegatess?.alarmWasToggled(sender: self, ison: alarmSwitch.isOn)
-    }*/
+    @IBAction func alarmSwitched(_ sender: UISwitch) {
+ 
+     //   self.delegatess?.alarmWasToggled(sender: self, ison: alarmSwitch.isOn)
+    }
     
     
 }
