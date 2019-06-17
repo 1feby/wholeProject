@@ -1,9 +1,7 @@
 import UIKit
 import CoreData
-let Delegate: ViewController? = UIApplication.shared.delegate as? ViewController
+
 @UIApplicationMain
-
-
 class AppDelegate: UIResponder, UIApplicationDelegate {
     
     var window: UIWindow?
@@ -11,7 +9,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
-        // Delegate?.fetchcontacts()
         return true
     }
     
@@ -48,7 +45,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
          application to it. This property is optional since there are legitimate
          error conditions that could cause the creation of the store to fail.
          */
-        let container = NSPersistentContainer(name: "CoreDataAlarm")
+        let container = NSPersistentContainer(name: "wholeProject")
         container.loadPersistentStores(completionHandler: { (storeDescription, error) in
             if let error = error as NSError? {
                 // Replace this implementation with code to handle the error appropriately.
@@ -83,7 +80,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             }
         }
     }
-    
     
 }
 

@@ -14,8 +14,9 @@ import Contacts
 import EventKit
 import UIAlertDateTimePicker
 import MediaPlayer
+import CoreData
 class ViewController: UIViewController,UIImagePickerControllerDelegate, UINavigationControllerDelegate,CLLocationManagerDelegate {
-   
+   let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
     var loadORremove : Bool = false //true for Remove
     // false  for Load
    
@@ -34,7 +35,8 @@ let locationManager = CLLocationManager()
         locationManager.delegate = self
         locationManager.desiredAccuracy = kCLLocationAccuracyHundredMeters
        // loadReminder()
-        LoadRemoveEvent()
+        //LoadRemoveEvent()
+        createNote(content: "phoebe")
         //when select weather only
         /*
         locationManager.requestWhenInUseAuthorization()
@@ -470,7 +472,52 @@ let locationManager = CLLocationManager()
         }
         performSegue(withIdentifier: "musicSegue", sender: self)
     }
+    //******************************* add Note **********************************
+    func createNote (content : String){
+        
+        
+        var TextField = UITextField()
+        let newNote = Note(context: context)
+        let alert = UIAlertController(title: "Add new note", message: "", preferredStyle: .alert)
+        let addTitle = UIAlertAction(title: "Add Title", style: .default) { (action) in
+            newNote.content = content
+            let textTitle = TextField.text!
+            if textTitle == "" {
+                newNote.title = "Untitled Note"
+            }else {
+                newNote.title = textTitle
+            }
+            self.saveItem()
+            
+            let alert3 = UIAlertController(title: "Note is saved", message: "", preferredStyle: .alert)
+            let ok = UIAlertAction(title: "ok", style: .default , handler: nil)
+            alert3.addAction(ok)
+            self.present(alert3 , animated: true , completion: nil)
+        }
+        alert.addTextField { (alertTextField) in
+            alertTextField.placeholder = "create new note"
+            TextField = alertTextField
+        }
+        alert.addAction(addTitle)
+        
+        self.present(alert , animated: true, completion: nil)}
     
+    
+    //*********************  func related to coreData ********************************
+    func saveItem(){
+        do{
+            try context.save()
+            
+        } catch {
+            print("error saving context \(error)")
+        }
+        
+        
+    }
+    
+
+
+
     //******************************** prepare for all segues **********************************
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         let destination = segue.destination as! oneTableViewController
