@@ -19,7 +19,7 @@ class ViewController: UIViewController,UIImagePickerControllerDelegate, UINaviga
    let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
     var loadORremove : Bool = false //true for Remove
     // false  for Load
-   
+   var notes = [Note]()
     var playlistTitle: [String] = []
     var numOfSongs : [ Int ] = []
 let locationManager = CLLocationManager()
@@ -36,7 +36,7 @@ let locationManager = CLLocationManager()
         locationManager.desiredAccuracy = kCLLocationAccuracyHundredMeters
        // loadReminder()
         //LoadRemoveEvent()
-        createNote(content: "phoebe")
+        loadNotes()
         //when select weather only
         /*
         locationManager.requestWhenInUseAuthorization()
@@ -502,7 +502,19 @@ let locationManager = CLLocationManager()
         
         self.present(alert , animated: true, completion: nil)}
     
-    
+    //*********************    loadNotes       *********************
+    func loadNotes(){
+        let request : NSFetchRequest<Note> = Note.fetchRequest()
+        do{
+            notes = try context.fetch(request)
+        }catch {
+            print("Error fetching")
+        }
+        for note in notes {
+            print(note.title)
+        }
+        performSegue(withIdentifier: "noteSegue", sender: self)
+    }
     //*********************  func related to coreData ********************************
     func saveItem(){
         do{
@@ -539,6 +551,9 @@ let locationManager = CLLocationManager()
             destination.Seguesty = segue.identifier!
             destination.playListTable = playlistTitle
             destination.numofSong = numOfSongs
+        }else if segue.identifier == "noteSegue"{
+            destination.Seguesty = segue.identifier!
+            destination.noteTa = notes
         }
     }
     }

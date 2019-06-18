@@ -27,6 +27,7 @@
                         <segue destination="MMW-Pu-LG8" kind="show" identifier="ReminderSegue" id="Gua-JJ-hDY"/>
                         <segue destination="MMW-Pu-LG8" kind="show" identifier="eventSegue" id="cJ5-eq-hE3"/>
                         <segue destination="MMW-Pu-LG8" kind="show" identifier="musicSegue" id="rvq-XA-1l3"/>
+                        <segue destination="MMW-Pu-LG8" kind="show" identifier="noteSegue" id="lnw-ro-ft6"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
@@ -136,6 +137,6 @@
         </scene>
     </scenes>
     <inferredMetricsTieBreakers>
-        <segue reference="rvq-XA-1l3"/>
+        <segue reference="lnw-ro-ft6"/>
     </inferredMetricsTieBreakers>
 </document>

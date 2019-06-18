@@ -2,7 +2,7 @@
 //  oneTableView.swift
 //  wholeProject
 //
-//  Created by phoebeezzat on 6/12/19.
+//  Created by phoebeezzat on 6/12/19/Users/pavlyremon/Desktop/wholeProject/wholeProject/oneTableView.swift.
 //  Copyright © 2019 phoebe. All rights reserved.
 //
 import UIKit
@@ -17,6 +17,7 @@ class oneTableViewController : UITableViewController {
     var smstext2 : String = ""
     var remindstoto = [EKReminder]()
     var eventTa = [EKEvent]()
+    var noteTa = [Note]()
     var url: NSURL!
     let myMediaPlayer = MPMusicPlayerApplicationController.applicationQueuePlayer
      let playlists = MPMediaQuery.playlists().collections
@@ -35,6 +36,8 @@ class oneTableViewController : UITableViewController {
             return eventTa.count
         }else if Seguesty == "musicSegue" {
             return playListTable.count
+        }else if Seguesty == "noteSegue" {
+            return noteTa.count
         }
         return 0
     }
@@ -63,6 +66,11 @@ class oneTableViewController : UITableViewController {
         }else if Seguesty == "musicSegue"{
             cell.MainLabel.text = playListTable[indexPath.row]
             cell.secondLabel.text = "\(numofSong[indexPath.row]) songs"
+            cell.alarmSwitch.isHidden = true
+            cell.wikiImage.isHidden = true
+        }else if Seguesty == "noteSegue" {
+            cell.MainLabel.text = noteTa[indexPath.row].title
+            cell.secondLabel.text = noteTa[indexPath.row].content
             cell.alarmSwitch.isHidden = true
             cell.wikiImage.isHidden = true
         }
