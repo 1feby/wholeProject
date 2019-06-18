@@ -9,7 +9,9 @@ import UIKit
 import Contacts
 import EventKit
 import MediaPlayer
+import CoreData
 class oneTableViewController : UITableViewController {
+    let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
     var playListTable = [String]()
     var numofSong = [Int]()
     var contArray = [CONTACTS]()
@@ -24,6 +26,7 @@ class oneTableViewController : UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         print("hor")
+        loadNotes()
     }
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         if Seguesty == "callSegue" || Seguesty == "smsSegue"{
@@ -76,6 +79,15 @@ class oneTableViewController : UITableViewController {
         }
         return cell
 }
+    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+        if  editingStyle == UITableViewCell.EditingStyle.delete  {
+            context.delete(noteTa[indexPath.row])
+            noteTa.remove(at: indexPath.row)
+            saveItem()
+            self.tableView.reloadData()
+        }
+        
+    }
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if Seguesty == "callSegue"{
             contArray[indexPath.row].number = contArray[indexPath.row].number.replacingOccurrences(of: " ", with: "")
@@ -106,5 +118,26 @@ class oneTableViewController : UITableViewController {
         let url = NSURL(string: "calshow:\(interval)")!
         UIApplication.shared.open(url as URL, options: [:], completionHandler: nil)
     }
-   
+    func loadNotes(){
+        let request : NSFetchRequest<Note> = Note.fetchRequest()
+        do{
+           noteTa = try context.fetch(request)
+        }catch {
+            print("Error fetching")
+        }
+        for note in noteTa {
+            print(note.title)
+        }
+        //performSegue(withIdentifier: "noteSegue", sender: self)
+    }
+    func saveItem(){
+        do{
+            try context.save()
+            
+        } catch {
+            print("error saving context \(error)")
+        }
+        
+        
+    }
 }

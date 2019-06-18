@@ -36,7 +36,7 @@ let locationManager = CLLocationManager()
         locationManager.desiredAccuracy = kCLLocationAccuracyHundredMeters
        // loadReminder()
         //LoadRemoveEvent()
-        loadNotes()
+        performSegue(withIdentifier: "noteSegue", sender: self)
         //when select weather only
         /*
         locationManager.requestWhenInUseAuthorization()
@@ -513,7 +513,7 @@ let locationManager = CLLocationManager()
         for note in notes {
             print(note.title)
         }
-        performSegue(withIdentifier: "noteSegue", sender: self)
+        //
     }
     //*********************  func related to coreData ********************************
     func saveItem(){
@@ -553,7 +553,7 @@ let locationManager = CLLocationManager()
             destination.numofSong = numOfSongs
         }else if segue.identifier == "noteSegue"{
             destination.Seguesty = segue.identifier!
-            destination.noteTa = notes
+           // destination.noteTa = notes
         }
     }
     }
