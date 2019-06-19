@@ -28,6 +28,7 @@
                         <segue destination="MMW-Pu-LG8" kind="show" identifier="eventSegue" id="cJ5-eq-hE3"/>
                         <segue destination="MMW-Pu-LG8" kind="show" identifier="musicSegue" id="rvq-XA-1l3"/>
                         <segue destination="MMW-Pu-LG8" kind="show" identifier="noteSegue" id="lnw-ro-ft6"/>
+                        <segue destination="MMW-Pu-LG8" kind="show" identifier="wikiSegue" id="Ddt-OS-Idj"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
@@ -191,6 +192,6 @@
         </scene>
     </scenes>
     <inferredMetricsTieBreakers>
-        <segue reference="VZU-Iq-Kid"/>
+        <segue reference="Ddt-OS-Idj"/>
     </inferredMetricsTieBreakers>
 </document>

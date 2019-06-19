@@ -10,14 +10,17 @@ import Contacts
 import EventKit
 import MediaPlayer
 import CoreData
-
+import Alamofire
+import SwiftyJSON
 class oneTableViewController : UITableViewController {
     let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
     var playListTable = [String]()
     var numofSong = [Int]()
     var contArray = [CONTACTS]()
+    var results = [JSON]()
      var Seguesty : String = ""
     var smstext2 : String = ""
+    var wikiText2 : String = ""
     var selectedIndex : Int = 0
     var remindstoto = [EKReminder]()
     var eventTa = [EKEvent]()
@@ -28,8 +31,10 @@ class oneTableViewController : UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         print("hor")
+        getWikipedia(searchName: wikiText2)
         tableView.reloadData()
-        loadNotes()
+       // loadNotes()
+        
        
     }
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -45,6 +50,9 @@ class oneTableViewController : UITableViewController {
             return playListTable.count
         }else if Seguesty == "noteSegue" {
             return noteTa.count
+        }else if Seguesty == "wikiSegue"{
+            print("\(results.count)")
+            return results.count
         }
         return 0
     }
@@ -80,16 +88,23 @@ class oneTableViewController : UITableViewController {
             cell.secondLabel.text = noteTa[indexPath.row].content
             cell.alarmSwitch.isHidden = true
             cell.wikiImage.isHidden = true
+        }else if Seguesty == "wikiSegue" {
+            cell.MainLabel.text = "wi"
+            cell.secondLabel.text = "fff"
+            cell.alarmSwitch.isHidden = true
+            cell.wikiImage.isHidden = true
+        
         }
         return cell
 }
+    if Seguesty == "noteSegue"{
     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         if  editingStyle == UITableViewCell.EditingStyle.delete  {
             context.delete(noteTa[indexPath.row])
             noteTa.remove(at: indexPath.row)
             saveItem()
             self.tableView.reloadData()
-        }
+    }}
         
     }
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
@@ -150,5 +165,17 @@ class oneTableViewController : UITableViewController {
         }
         
         
+    }
+    func getWikipedia(searchName : String){
+        let wikiURl = "https://en.wikipedia.org//w/api.php?action=query&format=json&prop=pageimages%7Cpageterms&generator=prefixsearch&redirects=1&formatversion=2&piprop=thumbnail&pithumbsize=50&pilimit=10&wbptterms=description&gpssearch=\(searchName)&gpslimit=10"
+        Alamofire.request(wikiURl , method: .get ).responseJSON {
+            response in
+            if response.result.isSuccess {
+                let wikiJSON : JSON = JSON(response.result.value!)
+                //print(wikiJSON)
+                self.results = wikiJSON["query"]["pages"].arrayValue
+            }
+            self.tableView.reloadData()
+        }
     }
 }

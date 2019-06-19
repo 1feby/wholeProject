@@ -25,6 +25,7 @@ class ViewController: UIViewController,UIImagePickerControllerDelegate, UINaviga
 let locationManager = CLLocationManager()
     var filterdItemsArray = [CONTACTS]()
     var smstext : String = ""
+    var wikitext : String = ""
     let eventStore : EKEventStore = EKEventStore()
     var calendars: [EKCalendar]?
     var remindstoto = [EKReminder]()
@@ -36,7 +37,8 @@ let locationManager = CLLocationManager()
         locationManager.desiredAccuracy = kCLLocationAccuracyHundredMeters
        // loadReminder()
         //LoadRemoveEvent()
-      performSegue(withIdentifier: "noteSegue", sender: self)
+        wikitext =  "phoebe"
+      performSegue(withIdentifier: "wikiSegue", sender: self)
         //when select weather only
         /*
         locationManager.requestWhenInUseAuthorization()
@@ -554,6 +556,9 @@ let locationManager = CLLocationManager()
         }else if segue.identifier == "noteSegue"{
             destination.Seguesty = segue.identifier!
            // destination.noteTa = notes
+        }else if segue.identifier == "wikiSegue"{
+            destination.Seguesty = segue.identifier!
+            destination.wikiText2 = wikitext
         }
     }
     }
