@@ -19,7 +19,7 @@ class TableViewCell: UITableViewCell{
     @IBOutlet weak var alarmSwitch: UISwitch!
     @IBOutlet weak var wikiImage: UIImageView!
     @IBOutlet weak var secondLabel: UILabel!
-   
+    
     // @IBOutlet weak var wikiImage: UIImageView!
     
     override func awakeFromNib() {
@@ -35,8 +35,8 @@ class TableViewCell: UITableViewCell{
     
     
     @IBAction func alarmSwitched(_ sender: UISwitch) {
- 
-     //   self.delegatess?.alarmWasToggled(sender: self, ison: alarmSwitch.isOn)
+        
+        //   self.delegatess?.alarmWasToggled(sender: self, ison: alarmSwitch.isOn)
     }
     
     

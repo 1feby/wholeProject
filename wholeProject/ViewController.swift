@@ -36,7 +36,7 @@ let locationManager = CLLocationManager()
         locationManager.desiredAccuracy = kCLLocationAccuracyHundredMeters
        // loadReminder()
         //LoadRemoveEvent()
-        performSegue(withIdentifier: "noteSegue", sender: self)
+      performSegue(withIdentifier: "noteSegue", sender: self)
         //when select weather only
         /*
         locationManager.requestWhenInUseAuthorization()

@@ -10,6 +10,7 @@ import Contacts
 import EventKit
 import MediaPlayer
 import CoreData
+
 class oneTableViewController : UITableViewController {
     let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
     var playListTable = [String]()
@@ -17,6 +18,7 @@ class oneTableViewController : UITableViewController {
     var contArray = [CONTACTS]()
      var Seguesty : String = ""
     var smstext2 : String = ""
+    var selectedIndex : Int = 0
     var remindstoto = [EKReminder]()
     var eventTa = [EKEvent]()
     var noteTa = [Note]()
@@ -26,7 +28,9 @@ class oneTableViewController : UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         print("hor")
+        tableView.reloadData()
         loadNotes()
+       
     }
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         if Seguesty == "callSegue" || Seguesty == "smsSegue"{
@@ -111,8 +115,15 @@ class oneTableViewController : UITableViewController {
             myMediaPlayer.setQueue(with: playlists![indexPath.row])
             // Start playing from the beginning of the queue
             myMediaPlayer.play()
+        }else if Seguesty == "noteSegue" {
+            selectedIndex = indexPath.row
+            performSegue(withIdentifier: "detailSegue", sender: self)
         }
 }
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        let destination = segue.destination as! detailViewController
+        destination.indexOfSelected = selectedIndex
+    }
     func gotoAppleCalendar(date: NSDate) {
         let interval = date.timeIntervalSinceReferenceDate
         let url = NSURL(string: "calshow:\(interval)")!
