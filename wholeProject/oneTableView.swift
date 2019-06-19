@@ -97,8 +97,9 @@ class oneTableViewController : UITableViewController {
         }
         return cell
 }
-    if Seguesty == "noteSegue"{
+   
     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+       if Seguesty == "noteSegue"{
         if  editingStyle == UITableViewCell.EditingStyle.delete  {
             context.delete(noteTa[indexPath.row])
             noteTa.remove(at: indexPath.row)
