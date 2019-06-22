@@ -37,7 +37,7 @@ let locationManager = CLLocationManager()
         locationManager.desiredAccuracy = kCLLocationAccuracyHundredMeters
        // loadReminder()
         //LoadRemoveEvent()
-        wikitext =  "phoebe"
+        wikitext =  "توماس اديسون"
       performSegue(withIdentifier: "wikiSegue", sender: self)
         //when select weather only
         /*

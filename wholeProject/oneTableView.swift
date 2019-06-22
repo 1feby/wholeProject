@@ -25,6 +25,8 @@ class oneTableViewController : UITableViewController {
     var remindstoto = [EKReminder]()
     var eventTa = [EKEvent]()
     var noteTa = [Note]()
+    var wikiImages = [UIImage]()
+    var image = UIImage.init()
     var url: NSURL!
     let myMediaPlayer = MPMusicPlayerApplicationController.applicationQueuePlayer
      let playlists = MPMediaQuery.playlists().collections
@@ -89,10 +91,14 @@ class oneTableViewController : UITableViewController {
             cell.alarmSwitch.isHidden = true
             cell.wikiImage.isHidden = true
         }else if Seguesty == "wikiSegue" {
-            cell.MainLabel.text = "wi"
-            cell.secondLabel.text = "fff"
+            cell.MainLabel.text = results[indexPath.row]["title"].stringValue
+            cell.secondLabel.text = results[indexPath.row]["terms"]["description"][0].stringValue
             cell.alarmSwitch.isHidden = true
-            cell.wikiImage.isHidden = true
+            if let url = results[indexPath.row]["thumbnail"]["source"].string {
+                fetchImage(url: url, completionHandler: { image in
+                    cell.wikiImage.image = image
+                })
+            }
         
         }
         return cell
@@ -134,6 +140,13 @@ class oneTableViewController : UITableViewController {
         }else if Seguesty == "noteSegue" {
             selectedIndex = indexPath.row
             performSegue(withIdentifier: "detailSegue", sender: self)
+        }else if Seguesty == "wikiSegue"{
+            //print("\(wikititle[indexPath.row])")
+            var wikiSearch = results[indexPath.row]["title"].stringValue.replacingOccurrences(of: " ", with: "_")
+            let url = "https://ar.wikipedia.org/wiki/\(wikiSearch)"
+            let wikiurl = url.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)
+            let myURL = URL(string: wikiurl!)
+            UIApplication.shared.openURL(myURL as! URL)
         }
 }
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
@@ -145,6 +158,7 @@ class oneTableViewController : UITableViewController {
         let url = NSURL(string: "calshow:\(interval)")!
         UIApplication.shared.open(url as URL, options: [:], completionHandler: nil)
     }
+    
     func loadNotes(){
         let request : NSFetchRequest<Note> = Note.fetchRequest()
         do{
@@ -168,15 +182,36 @@ class oneTableViewController : UITableViewController {
         
     }
     func getWikipedia(searchName : String){
-        let wikiURl = "https://en.wikipedia.org//w/api.php?action=query&format=json&prop=pageimages%7Cpageterms&generator=prefixsearch&redirects=1&formatversion=2&piprop=thumbnail&pithumbsize=50&pilimit=10&wbptterms=description&gpssearch=\(searchName)&gpslimit=10"
-        Alamofire.request(wikiURl , method: .get ).responseJSON {
+        let wikiURl = "https://ar.wikipedia.org//w/api.php?action=query&format=json&prop=pageimages%7Cpageterms&generator=prefixsearch&redirects=1&formatversion=2&piprop=thumbnail&prop=pageimages|pageterms&pithumbsize=50&pilimit=10&wbptterms=description&gpssearch=\(searchName.replacingOccurrences(of: " ", with: "_"))&gpslimit=10"
+        let url = wikiURl.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)
+        let myURL = URL(string: url!)
+        Alamofire.request(myURL! , method: .get ).responseJSON {
             response in
             if response.result.isSuccess {
                 let wikiJSON : JSON = JSON(response.result.value!)
-                //print(wikiJSON)
+                print(wikiJSON)
+                
                 self.results = wikiJSON["query"]["pages"].arrayValue
+                
             }
             self.tableView.reloadData()
         }
     }
+    func fetchImage(url: String, completionHandler: @escaping (UIImage?) -> ()) {
+        Alamofire.request(url).responseData { responseData in
+            
+            guard let imageData = responseData.data else {
+                completionHandler(nil)
+                return
+            }
+            
+            guard let image = UIImage(data: imageData) else {
+                completionHandler(nil)
+                return
+            }
+            
+            completionHandler(image)
+        }
+    }
+
 }
