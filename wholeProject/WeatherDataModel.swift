@@ -66,7 +66,7 @@ class WeatherDataModel {
 extension UIAlertController {
 
 func addImage(image : UIImage)  {
-    let maxsize  = CGSize(width: 245, height: 300)
+    let maxsize  = CGSize(width: 235, height: 300)
     let imageSize = image.size
     var ratio : CGFloat!
     if (imageSize.width > imageSize.height){

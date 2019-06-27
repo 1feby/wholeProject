@@ -20,36 +20,41 @@ class ViewController: UIViewController,UIImagePickerControllerDelegate, UINaviga
     var loadORremove : Bool = false //true for Remove
     // false  for Load
    var notes = [Note]()
-    var playlistTitle: [String] = []
-    var numOfSongs : [ Int ] = []
 let locationManager = CLLocationManager()
     var filterdItemsArray = [CONTACTS]()
     var smstext : String = ""
     var wikitext : String = ""
+    
     let eventStore : EKEventStore = EKEventStore()
     var calendars: [EKCalendar]?
     var remindstoto = [EKReminder]()
     var events = [EKEvent]()
+    
+   
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
         locationManager.delegate = self
         locationManager.desiredAccuracy = kCLLocationAccuracyHundredMeters
-       // loadReminder()
+       //loadReminder()
         //LoadRemoveEvent()
-        wikitext =  "توماس اديسون"
-      performSegue(withIdentifier: "wikiSegue", sender: self)
+       // callContact2()
+      /*  wikitext =  "توماس اديسون"
+      performSegue(withIdentifier: "wikiSegue", sender: self)*/
         //when select weather only
-        /*
-        locationManager.requestWhenInUseAuthorization()
+      //  takePhotos()
+       //performSegue(withIdentifier: "noteSegue", sender: self)
+      /* locationManager.requestWhenInUseAuthorization()
         locationManager.startUpdatingLocation()*/
-       
+    //takePhotos()
+       performSegue(withIdentifier: "musicSegue", sender: self)
     }
     // **********************to take photo and save photos ****************************
     func takePhotos (){
         if UIImagePickerController.isSourceTypeAvailable(.camera) {
             let imagePickerController = UIImagePickerController()
-            //imagePickerController.delegate = self as? UIImagePickerControllerDelegate & UINavigationControllerDelegate
+            //imagePickerController.del         egate = self as? UIImagePickerControllerDelegate & UINavigationControllerDelegate
             imagePickerController.sourceType = .camera
             self.present(imagePickerController, animated: true, completion: nil)
         }
@@ -93,7 +98,7 @@ let locationManager = CLLocationManager()
         }
     }
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
-        print("yess i fail")
+        print(error)
         //hn7ot alert
        
     }
@@ -155,6 +160,35 @@ let locationManager = CLLocationManager()
             createcontactAlert(title: "not found ", message: "no matched name of contact found")
         }
     }
+    func callContact2()  {
+        var contName : String = ""
+       var TextField = UITextField()
+        let alert = UIAlertController(title: "search for contact", message: "", preferredStyle: .alert)
+        let addTitle = UIAlertAction(title: "search", style: .default) { (action) in
+           contName = TextField.text!
+            self.filterdItemsArray = self.fetchcontacts().filter { item in
+                return item.fullname.lowercased().contains(contName.lowercased())
+            }
+            print(self.filterdItemsArray.count)
+            if self.filterdItemsArray.count == 1{
+                self.filterdItemsArray[0].number = self.filterdItemsArray[0].number.replacingOccurrences(of: " ", with: "")
+                let url : NSURL = URL(string: "tel://\(self.filterdItemsArray[0].number)")! as NSURL
+                UIApplication.shared.open(url as URL, options: [:], completionHandler: nil)
+            }else if self.filterdItemsArray.count > 1 {
+                self.performSegue(withIdentifier: "callSegue", sender: self)}
+            else {
+                self.createcontactAlert(title: "not found ", message: "no matched name of contact found")
+            }
+        }
+        alert.addTextField { (alertTextField) in
+            alertTextField.placeholder = "search for name"
+            TextField = alertTextField
+        }
+        alert.addAction(addTitle)
+        
+        present(alert, animated: true,completion: nil)
+       
+    }
     func createcontactAlert (title : String , message : String){
         let alert = UIAlertController(title: title, message: message, preferredStyle: UIAlertController.Style.alert)
         alert.addAction(UIAlertAction(title: "ok", style: UIAlertAction.Style.default, handler: { (action) in
@@ -202,6 +236,34 @@ let locationManager = CLLocationManager()
             createcontactAlert(title: "not found ", message: "no matched name of contact found")
         }
     }
+    func sendSMS(){
+        var contName : String = ""
+        var TextField = UITextField()
+        let alert = UIAlertController(title: "search for contact", message: "", preferredStyle: .alert)
+        let addTitle = UIAlertAction(title: "search", style: .default) { (action) in
+            contName = TextField.text!
+            self.filterdItemsArray = self.fetchcontacts().filter { item in
+                return item.fullname.lowercased().contains(contName.lowercased())
+            }
+            print(self.filterdItemsArray.count)
+            if self.filterdItemsArray.count == 1{
+                self.filterdItemsArray[0].number = self.filterdItemsArray[0].number.replacingOccurrences(of: " ", with: "")
+                let url : NSURL = URL(string: "sms://\(self.filterdItemsArray[0].number)")! as NSURL
+                UIApplication.shared.open(url as URL, options: [:], completionHandler: nil)
+            }else if self.filterdItemsArray.count > 1 {
+                self.performSegue(withIdentifier: "smsSegue", sender: self)}
+            else {
+                self.createcontactAlert(title: "not found ", message: "no matched name of contact found")
+            }
+        }
+        alert.addTextField { (alertTextField) in
+            alertTextField.placeholder = "search for name"
+            TextField = alertTextField
+        }
+        alert.addAction(addTitle)
+        
+        present(alert, animated: true,completion: nil)
+    }
     //*******************************    AddReminder       **************************************
    func addReminder (title : String){
    
@@ -246,6 +308,7 @@ let locationManager = CLLocationManager()
     self.present(alert, animated: true, completion: nil)
    
     }
+    
     //********************************  remove Reminder **************************************
     func removeReminder (title : String){
         
@@ -465,15 +528,7 @@ let locationManager = CLLocationManager()
         }
     }
     ///****************************** playMusic   **************************************
-    func playMusic(){
-        let playlists = MPMediaQuery.playlists().collections
-        for playlist in playlists! {
-            //print(playlist.value(forProperty: MPMediaPlaylistPropertyName)!)
-            playlistTitle.append(playlist.value(forProperty: MPMediaPlaylistPropertyName)! as! String)
-            numOfSongs.append(playlist.count)
-        }
-        performSegue(withIdentifier: "musicSegue", sender: self)
-    }
+   //heb2a perform bs
     //******************************* add Note **********************************
     func createNote (content : String){
         
@@ -503,6 +558,7 @@ let locationManager = CLLocationManager()
         alert.addAction(addTitle)
         
         self.present(alert , animated: true, completion: nil)}
+   
     
     //*********************    loadNotes       *********************
     func loadNotes(){
@@ -515,7 +571,7 @@ let locationManager = CLLocationManager()
         for note in notes {
             print(note.title)
         }
-        //
+       performSegue(withIdentifier: "noteSegue", sender: self)
     }
     //*********************  func related to coreData ********************************
     func saveItem(){
@@ -551,8 +607,7 @@ let locationManager = CLLocationManager()
             destination.eventTa = events
         }else if segue.identifier == "musicSegue" {
             destination.Seguesty = segue.identifier!
-            destination.playListTable = playlistTitle
-            destination.numofSong = numOfSongs
+            
         }else if segue.identifier == "noteSegue"{
             destination.Seguesty = segue.identifier!
            // destination.noteTa = notes

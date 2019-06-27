@@ -15,6 +15,7 @@ import SwiftyJSON
 class oneTableViewController : UITableViewController {
     let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
     var playListTable = [String]()
+    var playListID = [String]()
     var numofSong = [Int]()
     var contArray = [CONTACTS]()
     var results = [JSON]()
@@ -28,14 +29,23 @@ class oneTableViewController : UITableViewController {
     var wikiImages = [UIImage]()
     var image = UIImage.init()
     var url: NSURL!
+    let playlists = MPMediaQuery.playlists().collections
     let myMediaPlayer = MPMusicPlayerApplicationController.applicationQueuePlayer
-     let playlists = MPMediaQuery.playlists().collections
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         print("hor")
-        getWikipedia(searchName: wikiText2)
+        if Seguesty == "wikiSegue"{
+            getWikipedia(searchName: wikiText2)}
+        else if Seguesty == "noteSegue"{
+            loadNotes()}
+        else if Seguesty == "musicSegue"{
+            
+                loadPlaylists()
+            
+        }
         tableView.reloadData()
-       // loadNotes()
+      
         
        
     }
@@ -44,6 +54,7 @@ class oneTableViewController : UITableViewController {
             print("rrf \(contArray.count)")
             return contArray.count
         }else if Seguesty == "ReminderSegue"{
+            print(remindstoto.count)
             return remindstoto.count
         }else if Seguesty == "eventSegue" {
             print("slsls")
@@ -137,6 +148,9 @@ class oneTableViewController : UITableViewController {
             myMediaPlayer.setQueue(with: playlists![indexPath.row])
             // Start playing from the beginning of the queue
             myMediaPlayer.play()
+            let url : NSURL = URL(string: " music://geo.itunes.apple.com/us/playlists/\(playListID[indexPath.row])")! as NSURL
+            UIApplication.shared.open(url as URL, options: [:], completionHandler: nil)
+            
         }else if Seguesty == "noteSegue" {
             selectedIndex = indexPath.row
             performSegue(withIdentifier: "detailSegue", sender: self)
@@ -213,5 +227,17 @@ class oneTableViewController : UITableViewController {
             completionHandler(image)
         }
     }
+    func loadPlaylists() {
+      
+                    for playlist in self.playlists! {
+                        //print(playlist.value(forProperty: MPMediaPlaylistPropertyName)!)
+                        self.playListTable.append(playlist.value(forProperty: MPMediaPlaylistPropertyName)! as! String)
+                        numofSong.append(playlist.count)
+                        playListID.append(playlist.value(forProperty: MPMediaPlaylistPropertyPersistentID) as! String)
+                        
 
+        }
+      tableView.reloadData()
+    }
+    
 }
